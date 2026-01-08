@@ -2,7 +2,7 @@
 
 [project]
 name = "belt-on"
-version = "0.0.1"
+version = "0.0.0"
 description = "Throughput calculations for factory games."
 authors = [
     { name = "Apathetic Tools" }
