@@ -1,11 +1,19 @@
+# .pre-commit-config.yaml
 repos:
   - repo: local
     hooks:
+      - id: strip-co-authored
+        name: Strip Co-Authored-By trailers with Claude
+        entry: bash -c 'sed -i "/^Co-Authored-By:.*Claude/d" "$1"' --
+        language: system
+        stages: [prepare-commit-msg, commit-msg]
+        pass_filenames: true
+
       # Prevent commits with AI attribution
       - id: check-commit-message
         name: Check commit message for AI attribution
         entry: |
-          bash -c 'msg=$(cat "$1"); if echo "$msg" | grep -qE "(Claude Code|Co-Authored-By:)"; then echo "❌ Commit rejected: Cannot include Claude Code attribution or Co-Authored-By trailers"; echo ""; echo "Per project conventions (.claude/CLAUDE.md), commit messages must not"; echo "include AI tool attribution or Co-Authored-By trailers."; echo ""; echo "Please edit your commit message and try again."; exit 1; fi'
+          bash -c 'msg=$(cat "$1"); if echo "$msg" | grep -qE "(Claude Code|Co-Authored-By:.*Claude)"; then echo "❌ Commit rejected: Cannot include Claude attribution"; echo ""; echo "Commit messages must not include Claude tool attribution."; echo ""; echo "Please edit your commit message and try again."; exit 1; fi'
         language: system
         stages: [commit-msg]
         pass_filenames: true
